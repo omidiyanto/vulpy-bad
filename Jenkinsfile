@@ -95,8 +95,8 @@ pipeline {
             }
             steps {
                 sh '''\
-                sshpass -p ${DEPLOY_HOST_ENV_PASS} ssh root@${DEPLOY_HOST_ENV} "docker rm -f ${APP_NAME}"
                 sshpass -p ${DEPLOY_HOST_ENV_PASS} ssh root@${DEPLOY_HOST_ENV} "docker pull docker.io/${DOCKERHUB_USERNAME}/${APP_NAME}:latest"
+                sshpass -p ${DEPLOY_HOST_ENV_PASS} ssh root@${DEPLOY_HOST_ENV} "docker rm -f ${APP_NAME}"
                 sshpass -p ${DEPLOY_HOST_ENV_PASS} ssh root@${DEPLOY_HOST_ENV} "docker run -d --name ${APP_NAME} -p 5000:5000 docker.io/${DOCKERHUB_USERNAME}/${APP_NAME}:latest"
                 '''
             }
