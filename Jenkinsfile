@@ -79,5 +79,25 @@ pipeline {
                 '''
             }
         }
+
+        stage('Deploy') {
+            when {
+                allOf {
+                    expression {
+                        params.BUILD_TYPE == 'Scan + Deploy'
+                    }
+                    expression {
+                        currentBuild.result == null || currentBuild.result == 'SUCCESS'
+                    }
+                }
+            }
+            steps {
+                sh '''\
+                ssh root@${DEPLOY_HOST_ENV} "docker rm -f ${APP_NAME}"
+                ssh root@${DEPLOY_HOST_ENV} "docker pull docker.io/${DOCKERHUB_USERNAME}/${APP_NAME}:latest"
+                ssh root@${DEPLOY_HOST_ENV} "docker run -d --name ${APP_NAME} -p 5000:5000 docker.io/${DOCKERHUB_USERNAME}/${APP_NAME}:latest"
+                '''
+            }
+        }
     }
 }
