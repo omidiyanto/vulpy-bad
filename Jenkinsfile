@@ -51,7 +51,7 @@ pipeline {
             steps {
                 echo 'Build'
                 sh '''\
-                docker build -t my_image:$(date +$D) .
+                docker build -t my_image:$(date +%D) .
                 '''
             }
         }
