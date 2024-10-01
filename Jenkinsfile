@@ -54,7 +54,6 @@ pipeline {
                 }
             }
             steps {
-                echo 'Build'
                 sh '''\
                 docker build -t ${APP_NAME}:latest .
                 '''
@@ -73,7 +72,6 @@ pipeline {
                 }
             }
             steps {
-                echo 'Build'
                 sh '''\
                 docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}
                 docker tag ${APP_NAME}:latest docker.io/${DOCKERHUB_USERNAME}/${APP_NAME}:latest
