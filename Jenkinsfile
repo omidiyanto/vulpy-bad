@@ -1,7 +1,7 @@
 pipeline {
     agent any
     parameters {
-        choice(name: 'BUILD_TYPE', choices: ['Scan + Deploy','Scan Only'], description: 'Choose build type')
+        choice(name: 'BUILD_TYPE', choices: ['Scan Only','Scan + Deploy'], description: 'Choose build type')
     }
     environment {
         APP_NAME = "sastdemo"
