@@ -1,8 +1,16 @@
 pipeline {
     agent any
+    parameters {
+        choice(name: 'BUILD_TYPE', choices: ['Scan Only', 'Scan + Deploy'], description: 'Choose build type')
+    }
    
     stages {
-        stage('Scan') {
+        stage('SAST Scan') {
+            when {
+                expression {
+                    params.BUILD_TYPE == 'Scan Only'
+                }
+            }
             steps {
                 withSonarQubeEnv('sonarqube-omi') {
                     sh '''\
