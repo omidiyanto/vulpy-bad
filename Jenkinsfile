@@ -4,8 +4,9 @@ pipeline {
         choice(name: 'BUILD_TYPE', choices: ['Scan Only', 'Scan + Deploy'], description: 'Choose build type')
     }
     environment {
-        APP_NAME = "sast_demo"
+        APP_NAME = "sastdemo"
         DOCKERHUB_PASSWORD = credentials('dockerhub-password')
+        DOCKERHUB_USERNAME = "omidiyanto"
     }
    
     stages {
@@ -13,14 +14,72 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonarqube-omi') {
                     sh '''\
-                    echo appname = ${APP_NAME}
-                    echo password = ${DOCKERHUB_PASSWORD}
+                    sonar-scanner \
+                    -Dsonar.organization=demo-sast-omi \
+                    -Dsonar.projectKey=demo-proj-omi \
+                    -Dsonar.sources=. \
+                    -Dsonar.host.url=https://sonarcloud.io
                     '''
                 }
             }
         }
 
+        stage('Check Quality Gate') {
+            when {
+                expression {
+                    return params.BUILD_TYPE == 'Scan + Deploy'
+                }
+            }
+            steps {
+                timeout(time: 1, unit: 'MINUTES') {
+                    script {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            error "Pipeline aborted due to Quality Gate failure: ${qg.status}"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build') {
+            when {
+                allOf {
+                    expression {
+                        params.BUILD_TYPE == 'Scan + Deploy'
+                    }
+                    expression {
+                        currentBuild.result == null || currentBuild.result == 'SUCCESS'
+                    }
+                }
+            }
+            steps {
+                echo 'Build'
+                sh '''\
+                docker build -t ${APP_NAME}:latest .
+                '''
+            }
+        }
         
-        
+        stage('Release') {
+            when {
+                allOf {
+                    expression {
+                        params.BUILD_TYPE == 'Scan + Deploy'
+                    }
+                    expression {
+                        currentBuild.result == null || currentBuild.result == 'SUCCESS'
+                    }
+                }
+            }
+            steps {
+                echo 'Build'
+                sh '''\
+                docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}
+                docker tag ${APP_NAME}:latest docker.io/${DOCKERHUB_USERNAME}/${APP_NAME}:latest
+                docker push docker.io/${DOCKERHUB_USERNAME}/${APP_NAME}:latest
+                '''
+            }
+        }
     }
 }
