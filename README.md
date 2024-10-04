@@ -32,6 +32,19 @@ This project serves as a straightforward example of a CI/CD pipeline designed wi
 4. For 'Scan + Deploy', the pipeline must be run manually in Jenkins by selecting the build type parameter 'Scan + Deploy'. First, Jenkins will check out the repository and perform SAST analysis. If the SAST analysis passes, the pipeline will continue to build the application into a container image using Docker. Once the image is built, the artifact will be released and stored in the DockerHub registry. The final stage involves deploying the stored container image to an ECS instance on Alibaba Cloud for the Development and Testing environment, making the application accessible to users.
 
 ## Steps
-<iframe width="420" height="315"
-src="https://www.youtube.com/embed/j5D06xj7WN0?autoplay=1">
-</iframe>
+1. Install Jenkins on ubuntu server, following the official documentation https://pkg.jenkins.io/debian-stable/
+2. login on jenkins dashboard
+3. Go to "Manage Jenkins", then select "Plugins"
+4. First, install the required plugins, which is <b>GitHub Integration Plugin</b> and <b>SonarQube Scanner for Jenkins</b>. If required, restart the jenkins service.
+5. Sign Up on Sonarcloud (https://sonarcloud.io/)
+6. Create New Organization, then create new project.
+7. On Analysis Method, choose "Manually", then choose option <b>Other (for JS, TS, Go, Python, PHP, ...)</b>
+8. Follow the steps to download and install "SonarScanner" on the jenkins linux server.
+9. You'll be given SonarScanner command to executed to the projects, Keep this command for now. For example it should look like this:
+'''
+sonar-scanner \
+  -Dsonar.organization=demo-sast-omi \
+  -Dsonar.projectKey=demo-proj-omi \
+  -Dsonar.sources=. \
+  -Dsonar.host.url=https://sonarcloud.io
+'''
