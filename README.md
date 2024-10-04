@@ -32,3 +32,6 @@ This project serves as a straightforward example of a CI/CD pipeline designed wi
 4. For 'Scan + Deploy', the pipeline must be run manually in Jenkins by selecting the build type parameter 'Scan + Deploy'. First, Jenkins will check out the repository and perform SAST analysis. If the SAST analysis passes, the pipeline will continue to build the application into a container image using Docker. Once the image is built, the artifact will be released and stored in the DockerHub registry. The final stage involves deploying the stored container image to an ECS instance on Alibaba Cloud for the Development and Testing environment, making the application accessible to users.
 
 ## Steps
+<iframe width="420" height="315"
+src="https://www.youtube.com/embed/j5D06xj7WN0?autoplay=1">
+</iframe>
