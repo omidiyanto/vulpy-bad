@@ -41,10 +41,42 @@ This project serves as a straightforward example of a CI/CD pipeline designed wi
 7. On Analysis Method, choose "Manually", then choose option <b>Other (for JS, TS, Go, Python, PHP, ...)</b>
 8. Follow the steps to download and install "SonarScanner" on the jenkins linux server.
 9. You'll be given SonarScanner command to executed to the projects, Keep this command for now. For example it should look like this:
-'''
+
+```bash
 sonar-scanner \
-  -Dsonar.organization=demo-sast-omi \
-  -Dsonar.projectKey=demo-proj-omi \
+  -Dsonar.organization=YOUR_ORGANIZATION_NAME \
+  -Dsonar.projectKey=YOUR_PROJECT_KEY \
   -Dsonar.sources=. \
   -Dsonar.host.url=https://sonarcloud.io
-'''
+```
+
+10. Back to Jenkins Dashboard, go to "Manage Jenkins", choose "System".
+11. Scroll down on <b>SonarQube servers</b>, add SonarQube server. 
+12. Enable the Environment Variables checkbox
+13. Give the sonarqube <b>Name</b>
+14. On Server URL, enter "https://sonarcloud.io" as the value
+15. Add server authentication token, select jenkins. On the <b>Kind</b> select "Secret text"
+16. To get the token, we can go to sonarcloud, open "My Account" options, On Security tab, Generate the Token.
+17. Copy the token you've generated to "Secret" on the jenkins previously. On the ID, you can freely give the ID.
+18. Go back to jenkins dashboard, choose "New Item" and select "Pipeline" on the type. Enter your pipeline name also.
+19. Enable <b>This project is parameterized</b> option. Select "Choice Parameter".
+20. Enter the Name "BUILD_TYPE". On Choices, enter "Scan Only" and "Scan + Deploy". Freely enter the description, for example "Choose build type"
+21. Enable <b>GitHub hook trigger for GITScm polling</b> option so the pipeline can be trigger from commit push to GitHub repository.
+22. On the Pipeline Definition, choose "Pipeline script from SCM", then enter your GitHub repository URL.
+23. On Script Path, give the name of your jenkins pipeline file, for example "Jenkinsfile" that stored on the GitHub repository.
+24. Save the pipeline
+25. Lastly, go to the GitHub Repository, open the repo settings. Open <b>Webhooks</b> configuration. Add new Webhooks that points to your jenkins endpoint, for example:
+
+```
+https://JENKINS_SERVER_IP_OR_DOMAIN/github-webhook/
+```
+
+26. Finally, you can start build or run the pipeline. On Jenkins Dashboard, open pipeline you've created. There is should be Button called "Build with parameters", select it. Now you can run the pipeline with 2 BUILD_TYPE choices, which is "Scan Only" and "Scan + Deploy".
+<br>
+<br>
+
+
+
+## Video 
+Watch this video below to see the steps, implementation, and how the pipeline goes through: <br><br>
+[![Video](https://img.youtube.com/vi/42ISq5ZgbIU/0.jpg)](https://www.youtube.com/watch?v=42ISq5ZgbIU)
